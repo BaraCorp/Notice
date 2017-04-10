@@ -1,0 +1,6 @@
+
+*.sqlite3
+
+job/settings_local.py
+
+*.pyc
