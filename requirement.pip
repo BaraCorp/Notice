@@ -1,0 +1,5 @@
+Django==1.11
+django-tinymce==2.6.0
+Pillow==4.1.0
+django-widget-tweaks
+

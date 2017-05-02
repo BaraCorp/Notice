@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load staticfiles i18n widget_tweaks %}
+{% block content %}
+
+    <div class="form-group">
+         {{notice.type_notice}}
+    </div>
+    <div class="form-group">
+         {{notice.title}}
+    </div>
+    <div class="form-group">
+         {{notice.share}}
+    </div>
+    <div class="form-group">
+         {{notice.date_expired}}
+    </div>
+    <div class='form-group'>
+    <html>{{notice.body|safe}}</html>
+    </div>
+{% endblock %}

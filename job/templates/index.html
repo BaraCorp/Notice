@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load staticfiles i18n widget_tweaks %}
+{% block content %}
+      {% for notice in notices %}
+        <div class="notice">
+            <strong>{{notice.title}}</strong> Date de fin {{notice.date_expired}}  <span class="pull-right readMore">{% trans 'Read' %}</span>
+             <div class="desc">
+                <div class="org-title">
+                  {% if notice.organization.logo %}
+                  <a href="{{notice.organization.logo.url}}"><img  class="logo" alt="" src="{{notice.organization.logo.url}}"></a>
+                    {% endif %}{{ notice.organization.name }}</div>
+                <div >
+                   <span class="create-date"> {{notice.date_created}} </span> -- <span class="expired-date"> {{notice.date_expired}} </span>
+                </div>
+                <div>
+                  <html>{{ notice.body|safe }}</html>
+                </div>
+            </div>
+        </div>
+      {% endfor %}
+{% endblock %}

@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.10/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
-
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -37,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
+    'tinymce',
+    'job'
 ]
 
 MIDDLEWARE = [
@@ -100,11 +102,19 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_SENDER = 'root@localhost'
+
+AUTH_USER_MODEL = 'job.Member'
+
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/home'
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
+# TIME_ZONE = 'Africa/Bamako'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -118,8 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 try:
-    import settings_local.py
+    from job.settings_local import *
 except Exception as e:
+    print(e)
     pass

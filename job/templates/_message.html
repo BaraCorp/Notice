@@ -1,0 +1,7 @@
+{% if msg %}
+    <ul class="alert alert-danger">
+        {% for error in msg %}
+             <li>{{ error|escape }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

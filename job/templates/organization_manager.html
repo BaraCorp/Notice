@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% block content %}
+    <h1>Gestion des Organisations</h1>
+
+        <div class="col-md-12">
+            <a class="btn btn-default" href="{% url 'new-organization' %}"><em class="fa fa-add">Nouvel Organisation</em></a>
+        </div>
+        <hr>
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Nom</th>
+                    <th>Date d'ajout</th>
+                    <th>Capital</th>
+                    <th>Date de création de l'organisation</th>
+                    <th>E-mail</th>
+                    <th>Date d'expiration</th>
+                    <th>Statut</th>
+                    <th>Modification</th>
+                    <th>Ajouter un avi</th>
+                </tr>
+                {% for organization in organizations %}
+                    <tr>
+                        <td><a href="{{organization.url_view}}">{{organization.name}}</a></td>
+                        <td>{{organization.date_joined}}</td>
+                        <td>{{organization.capital}}</td>
+                        <td>{{organization.date_created}}</td>
+                        <td>{{organization.email}}</td>
+                        <td>{{organization.date_expired}}</td>
+                        <td>{{organization.is_active}}</td>
+                        <td align="center">
+                          <a class="btn btn-default" href="{{organization.url_change}}"><em class="fa fa-edit"></em></a>
+                        </td>
+                        <td align="center">
+                          <a class="btn btn-default" href="{{organization.url_notice}}"><em class="fa fa-plus"></em></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+{% endblock %}

@@ -2,5 +2,6 @@
 *.sqlite3
 
 job/settings_local.py
-
+org_logo/
+migrations/
 *.pyc
