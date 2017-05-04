@@ -9,7 +9,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from job.forms import (UserChangeForm, UserCreationForm)
-from job.models import (Notice, Member, PhoneNumber, Organization, Language)
+from job.models import (Notice, Member, PhoneNumber, Organization,
+                        Category, Language)
 
 # unregister and register again
 # admin.site.unregister(Group)
@@ -59,7 +60,13 @@ class OrganizationAdmin(admin.ModelAdmin):
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
     list_display = ('slug', 'name')
-    list_filter = ()
+    list_filter = ('name',)
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
 
 
 @admin.register(Notice)

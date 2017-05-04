@@ -9,8 +9,8 @@
     <link href="{% static "favicon.png" %}" rel="icon" type="image/x-icon" />
     <title>Bienvenue</title>
     <script src="{% static '/js/jquery-1.9.1.js' %}"></script>
-    <!-- Bootstrap -->
-    <link href="{% static 'font-awesome.css' %}" rel="stylesheet">
+    <!-- Bootstrap --><!--
+    <link href="{% static 'font-awesome.css' %}" rel="stylesheet"> -->
     <link href="{% static '/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -22,8 +22,9 @@
     <script src="{% static '/js/jquery-ui.min.js' %}" type="text/javascript"></script>
     <script src="{% static '/js/job.js' %}" type="text/javascript"></script>
     <link href="{% static '/js/jquery-ui.css' %}" rel="Stylesheet" type="text/css" />
+    <link href="{% static 'css/font-awesome.css' %}" rel="Stylesheet" type="text/css" />
+    <link href="{% static 'menu.css' %}" rel="stylesheet">
     <link href="{% static 'job.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
     <script>
         $(document).ready(function() {
@@ -37,7 +38,7 @@
     {% endblock %}
   </head>
   <body>
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse bs-dark">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -50,39 +51,27 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-
+                    <li class="dropdown-header"><a href="{% url 'user-manager' %}">OFFRES D'EMPLOI</a></li>
+                    <li class="dropdown-header"><a href="{% url 'user-manager' %}">AVIS D'APPEL D'OFFRES</a></li>
+                    <li class="dropdown-header"><a href="{% url 'user-manager' %}">PETITES ANNONCES</a></li>
                     {% if not user.is_anonymous %}
                         <li class="dropdown-header"><a href="{% url 'user-manager' %}">Gestion d'utilisateurs</a></li>
                         <li class="dropdown-header"><a href="{% url 'organization-manager' %}">Gestion des organisations</a></li>
                     {% endif %}
-<!--                     <li class="dropdown mega-dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Organisation  <span class="caret"></span></a>
-                        <ul class="dropdown-menu mega-dropdown-menu">
-                            <li class="col-sm-4">
-                                <ul>
-                                    <li class="dropdown-header"><a href="{% url 'new-user' %}">Nouvel compte</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li> -->
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> {{ user }}
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><em class="glyphicon glyphicon-user"> </em> {{ user }}
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="{% url 'new-user' %}">Creer un compte</a>
-                            </li>
                             {% if not user.is_anonymous %}
-                                <li class="divider"></li>
                                 <li>
-                                    <a href="{% url 'logout' %}">Logout</a>
+                                    <a href="{% url 'logout' %}"><em class="glyphicon glyphicon-log-out"></em> Logout</a>
                                 </li>
                             {% else %}
                                 <li>
-                                    <a href="{% url 'login' %}"><em class="fa sing-in">Login</a>
+                                    <a href="{% url 'login' %}"><em class="glyphicon glyphicon-log-in"> </em> Login</a>
                                 </li>
                             {% endif %}
                         </ul>

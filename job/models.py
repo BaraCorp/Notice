@@ -169,6 +169,18 @@ class PhoneNumber(models.Model):
     phone = models.IntegerField(verbose_name=_("Phone n°"))
 
 
+class Category(models.Model):
+
+    class Meta(object):
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
+
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+
+    def __str__(self):
+        return self.name
+
+
 class Notice(models.Model):
 
     class Meta:
@@ -183,6 +195,7 @@ class Notice(models.Model):
     }
     type_notice = models.CharField(verbose_name=_("Type"), max_length=50,
                                    choices=TYPE_NOTICE.items(), default=N)
+    category = models.ForeignKey(Category, verbose_name=_("Category"))
     body = HTMLField(blank=True, verbose_name=_("Text"))
     title = models.CharField(max_length=200, verbose_name=_("Title"))
     count_view = models.IntegerField(default=0)
@@ -195,8 +208,10 @@ class Notice(models.Model):
         verbose_name=_("Dated the"), auto_now=True)
     date_expired = models.DateTimeField(
         verbose_name=_("Date expired"), default=timezone.now)
-    lang = models.ForeignKey(Language, blank=True, null=True,
-                             verbose_name=_("Language"))
+    lang = models.ForeignKey(
+        Language, blank=True, null=True, verbose_name=_("Language"))
+    destination_email = models.EmailField(
+        verbose_name=_("Email"), unique=True, blank=True)
 
     @property
     def image(self):

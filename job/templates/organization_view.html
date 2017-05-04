@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
 {% block content %}
-    <h1>Gestion des Organisations</h1>
+    <img  class="logo" alt="" src="{{org.logo.url}}" ><h1>Organisation {{org.name}}</h1>
 
         <div class="row">
-            <a class="btn btn-default" href="{% url 'add-notice' id_url %}"><em class="fa fa-add">Nouvel avis</em></a>
+            <a class="btn btn-default" href="{% url 'add-notice' id_url %}"><em class="glyphicon glyphicon-plus"></em> Nouvel avis</a>
         </div>
         <hr>  
         <div class="col-md-12">
@@ -27,7 +27,7 @@
                         <td>{{notice.email}}</td>
                         <td>{{notice.date_expired}}</td>
                         <td align="center">
-                          <a class="btn btn-default" href="{{notice.url_change}}"><em class="fa fa-edit"></em></a>
+                          <a class="btn btn-default" href="{{notice.url_change}}"><em class="glyphicon glyphicon-edit"></em></a>
                         </td>
                     </tr>
                 {% endfor %}

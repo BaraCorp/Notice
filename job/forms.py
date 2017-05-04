@@ -8,6 +8,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from tinymce.widgets import TinyMCE
 # from django.utils.translation import ugettext_lazy as _
 
+from functools import partial
 
 from job.models import (Member, Notice, Organization)
 
@@ -48,11 +49,15 @@ class LoginForm(forms.Form):
 
 
 class NewOrganizationForm(forms.ModelForm):
+    DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+
     class Meta:
         model = Organization
-        fields = ('name', 'logo', 'date_created', 'capital', 'email',
-                  'date_expired', 'is_active')
+        fields = ('name', 'logo', 'date_created', 'capital',
+                  'email', 'date_expired', 'is_active')
         exclude = ['date_joined']
+        widgets = {'date_created': forms.DateInput(
+            attrs={'class': 'datepicker'})}
 
 
 class NewNoticeForm(forms.ModelForm):
@@ -130,8 +135,9 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = Member
-        fields = (
-            'email', 'password', 'date_of_birth', 'is_active', 'is_admin')
+        # fields = (
+        #     'email', 'password', 'date_of_birth', 'is_active', 'is_admin')
+        exclude = ['is_admin']
 
     def clean_password(self):
         return self.initial["password"]

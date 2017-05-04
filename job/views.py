@@ -38,7 +38,7 @@ def add_notice(request, *args, **kwargs):
 
     orgztion = Organization.objects.get(pk=id_url)
     user = request.user
-    if request.method == 'POST' and '_new_notice' in request.POST:
+    if request.method == 'POST' and '_notice_new' in request.POST:
         notice_form = NewNoticeForm(request.POST or None)
         if notice_form.is_valid():
             notice = notice_form.save(commit=False)
@@ -49,14 +49,25 @@ def add_notice(request, *args, **kwargs):
         notice_form = NewNoticeForm()
     cxt = {'user': user, 'notice_form': notice_form,
            'org_name': orgztion.name}
-    return render(request, 'new_notice.html', cxt)
+    return render(request, 'notice_new.html', cxt)
 
 
 @login_required
 def notice_change(request, *args, **kwargs):
     id_url = kwargs["pk_notice"]
-    cxt = {}
-    return render(request, 'new_notice.html', cxt)
+    selected_notice = Notice.objects.get(pk=id_url)
+    user = request.user
+    if request.method == 'POST' and '_notice_new' in request.POST:
+        notice_form = NewNoticeForm(request.POST, instance=selected_notice)
+        if notice_form.is_valid():
+            notice = notice_form.save(commit=False)
+            notice.save()
+            return redirect("/")
+    else:
+        notice_form = NewNoticeForm(instance=selected_notice)
+    cxt = {'user': user, 'notice_form': notice_form,
+           'org_name': selected_notice.organization.name}
+    return render(request, 'notice_new.html', cxt)
 
 
 @login_required
@@ -75,7 +86,7 @@ def user_manager(request):
         member.url_change = reverse("user-change", args=[member.pk])
 
     user = request.user
-    if request.method == 'POST' and '_new_notice' in request.POST:
+    if request.method == 'POST' and '_notice_new' in request.POST:
         notice_form = NewNoticeForm(request.POST or None)
         if notice_form.is_valid():
             # notice = notice_form.save(commit=False)
@@ -89,16 +100,26 @@ def user_manager(request):
 
 
 @login_required
-def new_user(request):
-    if request.method == 'POST' and '_new_user' in request.POST:
-        new_user_form = UserCreationForm(request.POST or None)
-        if new_user_form.is_valid():
-            new_user_form.save()
+def user_new(request):
+    if request.method == 'POST' and '_user_new' in request.POST:
+        user_new_form = UserCreationForm(request.POST or None)
+        if user_new_form.is_valid():
+            user_new_form.save()
             return redirect("/home")
     else:
-        new_user_form = UserCreationForm()
-    cxt = {"new_user_form": new_user_form}
-    return render(request, 'new_user.html', cxt)
+        user_new_form = UserCreationForm()
+    cxt = {"user_new_form": user_new_form}
+    return render(request, 'user_new.html', cxt)
+
+
+# def password_change(request):
+#     if request.method == 'POST':
+#         form = PasswordChangeForm(user=request.user, data=request.POST)
+#         if form.is_valid():
+#             form.save()
+#             update_session_auth_hash(request, form.user)
+#     else:
+#         pass
 
 
 @login_required
@@ -106,17 +127,16 @@ def user_change(request, *args, **kwargs):
     id_url = kwargs["pk"]
 
     selected_member = Member.objects.get(pk=id_url)
-    print(selected_member)
-    if request.method == 'POST' and 'user_change' in request.POST:
+    if request.method == 'POST' and '_user_change' in request.POST:
         user_change_form = UserChangeForm(request.POST,
                                           instance=selected_member)
         if user_change_form.is_valid():
             user_change_form.save()
-            return redirect("/user-manager")
+            return redirect("/user_manager")
     else:
         user_change_form = UserChangeForm(instance=selected_member)
-    cxt = {"new_user_form": user_change_form}
-    return render(request, 'new_user.html', cxt)
+    cxt = {"user_change_form": user_change_form}
+    return render(request, 'user_change.html', cxt)
 
 
 @login_required
@@ -131,7 +151,7 @@ def organization_manager(request):
             "add-notice", args=[organization.pk])
 
     user = request.user
-    if request.method == 'POST' and '_new_organization' in request.POST:
+    if request.method == 'POST' and '_organization_new' in request.POST:
         org_form = NewOrganizationForm(request.POST or None)
         if org_form.is_valid():
             # notice = org_form.save(commit=False)
@@ -153,7 +173,7 @@ def organization_view(request, *args, **kwargs):
     for notice in notices:
         notice.url_view = reverse("notice-view", args=[notice.pk])
         notice.url_change = reverse("notice-change", args=[notice.pk])
-    cxt = {'notices': notices, "id_url": id_url}
+    cxt = {'notices': notices, "id_url": id_url, "org": org}
     return render(request, 'organization_view.html', cxt)
 
 
@@ -162,22 +182,22 @@ def organization_change(request, *args, **kwargs):
     id_url = kwargs["pk"]
 
     selected_organization = Organization.objects.get(pk=id_url)
-    if request.method == 'POST' and '_new_organization' in request.POST:
+    if request.method == 'POST' and '_organization_new' in request.POST:
         organization_change_form = NewOrganizationForm(
-            request.POST, instance=selected_organization)
+            request.POST, request.FILES, instance=selected_organization)
         if organization_change_form.is_valid():
             organization_change_form.save()
             return redirect("/organization_manager")
     else:
         organization_change_form = NewOrganizationForm(
             instance=selected_organization)
-    cxt = {"new_organization_form": organization_change_form}
-    return render(request, 'new_organization.html', cxt)
+    cxt = {"organization_new_form": organization_change_form}
+    return render(request, 'organization_new.html', cxt)
 
 
 @login_required
-def new_organization(request):
-    if request.method == 'POST' and '_new_organization' in request.POST:
+def organization_new(request):
+    if request.method == 'POST' and '_organization_new' in request.POST:
         new_org_form = NewOrganizationForm(request.POST, request.FILES)
         print("login")
         if new_org_form.is_valid():
@@ -185,8 +205,8 @@ def new_organization(request):
             return redirect("/organization_manager")
     else:
         new_org_form = NewOrganizationForm()
-    cxt = {"new_organization_form": new_org_form}
-    return render(request, 'new_organization.html', cxt)
+    cxt = {"organization_new_form": new_org_form}
+    return render(request, 'organization_new.html', cxt)
 
 
 def index(request):
