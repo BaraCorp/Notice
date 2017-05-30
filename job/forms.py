@@ -10,7 +10,7 @@ from tinymce.widgets import TinyMCE
 
 from functools import partial
 
-from job.models import (Member, Notice, Organization)
+from job.models import (Member, Notice, Organization, SmallNotice)
 
 
 class SearchForm(forms.Form):
@@ -79,7 +79,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = Member
-        fields = ('username', 'image', 'date_of_birth', 'full_name',
+        fields = ('username', 'image', 'date_of_birth', 'full_name', 'email',
                   'localite')
         # exclude = ['email']
 
@@ -119,7 +119,6 @@ class UserCreationForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
-        print(user)
         if commit:
             user.save()
         return user
@@ -141,3 +140,25 @@ class UserChangeForm(forms.ModelForm):
 
     def clean_password(self):
         return self.initial["password"]
+
+
+class SmallNoticeForm(forms.ModelForm):
+    """docstring for SmallNoticeForm"""
+
+    class Meta:
+        model = SmallNotice
+        # fields = (
+        #     'email', 'password', 'date_of_birth', 'is_active', 'is_admin')
+        exclude = ['count_view', 'date']
+
+        widgets = {
+            # 'date_of_birth': forms.DateInput(attrs={'class': 'datepicker'}),
+            'name': forms.TextInput(attrs={
+                'placeholder': "Nom et prénom"}),
+            'email': forms.TextInput(attrs={
+                'placeholder': "Adresse e-mail"}),
+            'subject': forms.TextInput(attrs={
+                'placeholder': "Sujet"}),
+            'body': forms.Textarea(attrs={
+                'placeholder': 'Message en 120 caractères.'}),
+        }

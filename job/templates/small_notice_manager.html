@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% block content_lg %}
+    <h1>Gestion des petites annoces</h1>
+        <hr>
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>subject</th>
+                    <th>body</th>
+                    <th>Date de creation</th>
+                    <th>Statut</th>
+                </tr>
+                {% for small_notice in small_notices %}
+                    <tr>
+                        <td><a href="{{small_notice.url_view}}">{{small_notice.name}}</a></td>
+                        <td>{{small_notice.email}}</td>
+                        <td>{{small_notice.subject}}</td>
+                        <td>{{small_notice.body}}</td>
+                        <td>{{small_notice.date}}</td>
+                        <td> <a class="btn btn-default" href="{{small_notice.url_validated}}"><em class="glyphicon glyphicon-ok"></em> Valider</a>
+                             <a class="btn btn-danger" href="{{small_notice.url_unvalidated}}"><em class="glyphicon glyphicon-ban-circle"></em> Rejeter </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+{% endblock %}

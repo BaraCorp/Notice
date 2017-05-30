@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% block content_lg %}
+          <div class="row clearfix">
+              <div class="col-md-12 column">
+                  {% for a in small_notices %}
+                    <div class="list-group">
+                        <div class="list-group-item">{{ a.name}}
+                            <h4 class="list-group-item-heading">
+                                <h5>{{a.body}}</h5>
+                                <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access site using SSH terminal">
+                                  <h6> {{a.subject}} </h6>
+                                </a>
+                            </h4>
+                            <p class="list-group-item-text">
+                                <h6 class="label label-success"><em class="glyphicon glyphicon-calendar"> {{a.date}} </em></h6><!--
+                               <h6> <a href="mailto:{{a.email}}?Subject=%20{{a.name}}"><em class="glyphicon glyphicon-envelope"></em> {{a.email}} </a></h6> -->
+                            </p>
+                        </div>
+                    </div>
+                  {% endfor %}
+              </div>
+          </div>
+{% endblock %}

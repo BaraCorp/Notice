@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles i18n widget_tweaks %}
-{% block content %}
+{% block content_lg %}
     <script src="{% static '/js/tinymce/tinymce.min.js' %}"></script>
     <script>tinymce.init({ selector:'textarea' });</script>
     {% include "_message.html" with msg=notice_form.errors %}
@@ -17,6 +17,12 @@
                         </div>
                         <div class="form-group">
                             <label for='fname'>{{notice_form.type_notice.label}}</label> {{notice_form.type_notice}}
+                        </div>
+                        <div class="form-group">
+                            <label for='fname'>{{notice_form.locality.label}}</label> {{notice_form.locality}}
+                        </div>
+                        <div class="form-group">
+                            <label for='fname'>{{notice_form.post.label}}</label> {{notice_form.post}}
                         </div>
                         <div  class="form-group">
                           <label for='fname'>{{notice_form.category.label}}</label> {{notice_form.category|add_class:"form-control"}}
@@ -37,7 +43,7 @@
                             {{notice_form.body|add_class:"form-control"|attr:"rows:15"}} {{notice_form.body.errors}}
                         </div>
                         <div class='text-right'>
-                            <button type="submit" name="_notice_new" class="btn btn-sm btn-primary" value="OK">OK</button>
+                            <button type="submit" name="_notice_new" class="btn btn-sm btn-primary" value="OK">{% trans 'Save' %}</button>
                         </div>
                     </div>
                 </div>

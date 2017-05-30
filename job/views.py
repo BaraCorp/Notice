@@ -8,16 +8,18 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 
-from job.models import Notice, Member, Organization
+from job.models import Notice, Member, Organization, SmallNotice, CallForTender
 from job.forms import (SearchForm, UserCreationForm, NewNoticeForm,
-                       UserChangeForm, NewOrganizationForm)
+                       UserChangeForm, NewOrganizationForm, SmallNoticeForm)
 
 
 def init(request):
 
     search_form = SearchForm(request.POST or None)
+    small_notice_form = SmallNoticeForm(request.POST or None)
     result = ""
     result_not_found = ""
+
     if request.method == 'POST' and '_search' in request.POST:
         print("search")
         if search_form.is_valid():
@@ -25,8 +27,15 @@ def init(request):
             if not result:
                 result_not_found = "Aucun numéro ne correspond"
 
+    if request.method == 'POST' and '"_small_notice"' in request.POST:
+        print("_small_notice")
+        if small_notice_form.is_valid():
+            small_notice = small_notice_form.save(commit=False)
+            small_notice.save()
+
     context = {'user': request.user,
                'result_not_found': result_not_found,
+               'small_notice_form': small_notice_form,
                'search_form': search_form, 'msg_result': result,
                'settings': settings}
     return context
@@ -76,6 +85,12 @@ def notice_view(request, *args, **kwargs):
     notice = Notice.objects.get(pk=id_url)
     cxt = {'notice': notice}
     return render(request, 'notice_view.html', cxt)
+
+
+def small_notice_view(request):
+    small_notices = SmallNotice.objects.validated()
+    cxt = {'small_notices': small_notices}
+    return render(request, 'small_notices_view.html', cxt)
 
 
 @login_required
@@ -137,6 +152,50 @@ def user_change(request, *args, **kwargs):
         user_change_form = UserChangeForm(instance=selected_member)
     cxt = {"user_change_form": user_change_form}
     return render(request, 'user_change.html', cxt)
+
+
+@login_required
+def small_notice_manager(request):
+    small_notices = SmallNotice.objects.unvalidated()
+    for snotice in small_notices:
+        snotice.url_validated = reverse(
+            "snotice-validated", args=[snotice.pk])
+        snotice.url_unvalidated = reverse(
+            "snotice-unvalidated", args=[snotice.pk])
+
+    user = request.user
+    if request.method == 'POST' and '_small_notice_new' in request.POST:
+        small_notice_form = SmallNoticeForm(request.POST or None)
+        if small_notice_form.is_valid():
+            # notice = small_notice_form.save(commit=False)
+            # notice.author = Member.objects.filter()
+            # notice.save()
+            return redirect("/")
+    else:
+        small_notice_form = SmallNoticeForm()
+    cxt = {'small_notices': small_notices, 'user': user,
+           'small_notice_form': small_notice_form}
+    return render(request, 'small_notice_manager.html', cxt)
+
+
+@login_required
+def snotice_validated(request, *args, **kwargs):
+    id_url = kwargs["pk"]
+
+    selected_small_notice = SmallNotice.objects.get(pk=id_url)
+    selected_small_notice.validated = True
+    selected_small_notice.save()
+    return redirect("/small_notice_manager")
+
+
+@login_required
+def snotice_unvalidated(request, *args, **kwargs):
+    id_url = kwargs["pk"]
+
+    selected_small_notice = SmallNotice.objects.get(pk=id_url)
+    selected_small_notice.reject = True
+    selected_small_notice.save()
+    return redirect("/small_notice_manager")
 
 
 @login_required
@@ -209,18 +268,21 @@ def organization_new(request):
     return render(request, 'organization_new.html', cxt)
 
 
-def index(request):
-
+def index(request, *args, **kwargs):
     cxt = init(request)
-    notices = Notice.objects.all()
+    notices = Notice.objects.notexpired()
+    tenders = CallForTender.objects.notexpired()
+
+    smallnotices = SmallNotice.objects.validated()
     # import ipdb; ipdb.set_trace()
-    cxt.update({'notices': notices})
+    cxt.update({'notices': notices, 'tenders': tenders,
+                'smallnotices': smallnotices})
     return render(request, 'index.html', cxt)
 
 
 def home(request):
 
     cxt = init(request)
-    notices = Notice.objects.all()
+    notices = Notice.objects.notexpired()
     cxt.update({'notices': notices})
     return render(request, 'home.html', cxt)

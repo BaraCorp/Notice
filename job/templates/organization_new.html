@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load staticfiles i18n widget_tweaks %}
-{% block content %}
+{% block content_lg %}
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
       <div class="new-organization">
           <form "form-horizontal" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+              <h2>Nouvel organisation</h2>
               <div  class="form-group">
                   <label>{{organization_new_form.name.label}}</label>
                   {{organization_new_form.name|add_class:"form-control"}}
@@ -32,7 +33,7 @@
                   <label>{{organization_new_form.is_active.label}}</label>
                   {{organization_new_form.is_active|add_class:"form-control"}}
               </div>
-              <button type="submit" name="_organization_new" class="btn btn-default">{% trans "Sign Up" %}</button>
+              <button type="submit" name="_organization_new" class="btn btn-default">{% trans "Save" %}</button>
           </form>
       </div>
     </div>

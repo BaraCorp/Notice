@@ -12,6 +12,7 @@
     <!-- Bootstrap --><!--
     <link href="{% static 'font-awesome.css' %}" rel="stylesheet"> -->
     <link href="{% static '/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.3.0/css/mdb.min.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -25,7 +26,9 @@
     <link href="{% static 'css/font-awesome.css' %}" rel="Stylesheet" type="text/css" />
     <link href="{% static 'menu.css' %}" rel="stylesheet">
     <link href="{% static 'job.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.3.0/js/mdb.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
@@ -53,10 +56,11 @@
                 <ul class="nav navbar-nav">
                     <li class="dropdown-header"><a href="{% url 'user-manager' %}">OFFRES D'EMPLOI</a></li>
                     <li class="dropdown-header"><a href="{% url 'user-manager' %}">AVIS D'APPEL D'OFFRES</a></li>
-                    <li class="dropdown-header"><a href="{% url 'user-manager' %}">PETITES ANNONCES</a></li>
+                    <li class="dropdown-header"><a href="{% url 'small-notice-view' %}">PETITES ANNONCES</a></li>
                     {% if not user.is_anonymous %}
-                        <li class="dropdown-header"><a href="{% url 'user-manager' %}">Gestion d'utilisateurs</a></li>
+                        <li class="dropdown-header"><a href="{% url 'small-notice-manager' %}">Gestion petites Annonces</a></li>
                         <li class="dropdown-header"><a href="{% url 'organization-manager' %}">Gestion des organisations</a></li>
+                        <li class="dropdown-header"><a href="{% url 'user-manager' %}">Gestion d'utilisateurs</a></li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -82,8 +86,18 @@
     </nav>
     <div class="container">
         <div class="row">
-            {% block content %}
-            {% endblock %}
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                {% block content_lg %}
+                {% endblock %}
+            </div>
+            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                {% block rigth %}
+                {% endblock %}
+            </div>
         </div>
         <div class="row">
             {% block footer %}

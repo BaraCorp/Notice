@@ -1,0 +1,2 @@
+settings_local
+[{"model": "job.contract", "pk": 1, "fields": {"name": "CDD"}}, {"model": "job.contract", "pk": 2, "fields": {"name": "CDI"}}, {"model": "job.contract", "pk": 3, "fields": {"name": "Indefinite"}}]

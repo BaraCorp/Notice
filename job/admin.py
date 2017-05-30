@@ -9,8 +9,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from job.forms import (UserChangeForm, UserCreationForm)
-from job.models import (Notice, Member, PhoneNumber, Organization,
-                        Category, Language)
+from job.models import (Notice, Member, PhoneNumber, Organization, Locality,
+                        CommentNotice, Contract, Language, SmallNotice)
 
 # unregister and register again
 # admin.site.unregister(Group)
@@ -46,6 +46,11 @@ class PhoneNumberInline(admin.TabularInline):
     model = PhoneNumber
 
 
+class CommentInline(admin.TabularInline):
+
+    model = CommentNotice
+
+
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
 
@@ -57,14 +62,37 @@ class OrganizationAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(SmallNotice)
+class SmallNoticeAdmin(admin.ModelAdmin):
+    list_display = (
+        'subject', 'body', 'name', 'date', 'count_view', 'validated', 'reject')
+    list_filter = ('email', 'reject', 'validated')
+
+    inlines = [
+        CommentInline,
+    ]
+
+
+@admin.register(CommentNotice)
+class CommentNoticeAdmin(admin.ModelAdmin):
+    list_display = ('body', 'small_notice')
+    list_filter = ('small_notice',)
+
+
+@admin.register(Locality)
+class LocalityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    list_filter = ('name',)
+
+
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
     list_display = ('slug', 'name')
     list_filter = ('name',)
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+@admin.register(Contract)
+class ContractAdmin(admin.ModelAdmin):
     list_display = ('name',)
     list_filter = ('name',)
 
@@ -74,4 +102,4 @@ class NoticeAdmin(admin.ModelAdmin):
     list_display = ('title', 'date_created', 'share', 'date_expired',
                     'count_view', 'organization', 'slug')
     list_filter = ('date_created', 'date_expired',
-                   'organization', 'type_notice')
+                   'organization')

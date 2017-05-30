@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles i18n widget_tweaks %}
-{% block content %}
+{% block content_lg %}
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
       {% include "_message.html" with msg=user_new_form.errors %}
       <div class="new-user">
@@ -17,6 +17,10 @@
               <div  class="form-group">
                   <label>{{user_new_form.full_name.label}}</label>
                   {{user_new_form.full_name|add_class:"form-control"}}
+              </div>
+              <div  class="form-group">
+                  <label>{{user_new_form.email.label}}</label>
+                  {{user_new_form.email|add_class:"form-control"}}
               </div>
               <div  class="form-group">
                   <label>{{user_new_form.localite.label}}</label>

@@ -24,10 +24,12 @@ class MemberManager(BaseUserManager):
         birth and password.
         """
         if not username:
+            raise ValueError('Users must have an username')
+        if not email:
             raise ValueError('Users must have an email address')
 
         user = self.model(
-            # email=self.normalize_email(email),
+            email=self.normalize_email(email),
             # date_of_birth=date_of_birth,
             username=username
         )
@@ -143,6 +145,10 @@ class Member(AbstractBaseUser, PermissionsMixin):
 
 
 class Organization(models.Model):
+    class Meta:
+        verbose_name = _("Organization")
+        verbose_name_plural = _("Organizations")
+        ordering = ['-name']
 
     name = models.CharField(max_length=100, verbose_name=_("Nom"))
     logo = models.ImageField(
@@ -168,12 +174,15 @@ class PhoneNumber(models.Model):
         max_length=100, verbose_name=_("Type phone number"))
     phone = models.IntegerField(verbose_name=_("Phone n°"))
 
+    def __str__(self):
+        return self.phone, self.type_number
 
-class Category(models.Model):
+
+class Contract(models.Model):
 
     class Meta(object):
-        verbose_name = _("Category")
-        verbose_name_plural = _("Categories")
+        verbose_name = _("Contract")
+        verbose_name_plural = _("Contracts")
 
     name = models.CharField(max_length=200, verbose_name=_("Name"))
 
@@ -181,24 +190,152 @@ class Category(models.Model):
         return self.name
 
 
+class SmallNoticeManager(models.Manager):
+
+    def get_queryset(self):
+        return super(SmallNoticeManager, self).get_queryset()
+
+    def unreject(self):
+        return super(SmallNoticeManager, self).filter(
+            reject=False)
+
+    def unvalidated(self):
+        return super(SmallNoticeManager, self).filter(
+            reject=False, validated=False)
+
+    def validated(self):
+        return super(SmallNoticeManager, self).filter(
+            reject=False, validated=True)
+
+
+class SmallNotice(models.Model):
+
+    class Meta:
+        verbose_name = _("Small Notice")
+        verbose_name_plural = _("Smalls Notices")
+        ordering = ['-date']
+
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+    subject = models.CharField(max_length=20, verbose_name=_("Subject"),
+                               blank=True)
+    body = models.CharField(max_length=200)
+    email = models.EmailField(verbose_name=_("Email"), null=True)
+    validated = models.BooleanField(verbose_name=_("Validé"), default=False)
+    reject = models.BooleanField(verbose_name=_("Réjeter"), default=False)
+    date = models.DateTimeField(verbose_name=_("Date"), default=timezone.now)
+    count_view = models.IntegerField(default=0)
+
+    objects = SmallNoticeManager()
+
+    def __str__(self):
+        return "{sj} / {bdy} / {mbr}".format(
+            sj=self.subject, bdy=self.body, mbr=self.name)
+
+    def save(self, *args, **kwargs):
+
+        super(SmallNotice, self).save(*args, **kwargs)
+
+
+class CommentNotice(models.Model):
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+    date_created = models.DateTimeField(verbose_name=_("Date Created"),
+                                        default=timezone.now)
+    body = models.CharField(max_length=200, verbose_name=_("Body"))
+    small_notice = models.ForeignKey(
+        SmallNotice, verbose_name=_("Small notice"))
+
+    def __str__(self):
+        return "{}/{}/{}".format(
+            self.small_notice, self.date_created, self.body)
+
+
+class NoticeManager(models.Manager):
+
+    def get_queryset(self):
+        return super(NoticeManager, self).get_queryset()
+
+    def notexpired(self):
+        return super(NoticeManager, self).filter(
+            date_expired__gte=timezone.now())
+
+
+class Locality(models.Model):
+
+    class Meta:
+        verbose_name = _("Locality")
+        verbose_name_plural = _("Localities")
+
+    slug = models.SlugField(),
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+
+    def __str__(self):
+        return self.name
+
+
+class CallForTenderManager(models.Manager):
+
+    def get_queryset(self):
+        return super(CallForTenderManager, self).get_queryset()
+
+    def notexpired(self):
+        return super(CallForTenderManager, self).filter(
+            date_expired__gte=timezone.now())
+
+
+class CallForTender(models.Model):
+    """ Offres
+    """
+
+    class Meta:
+        verbose_name = _("Tender")
+        verbose_name_plural = _("Tenders")
+        ordering = ['-date_created']
+
+    title = models.CharField(max_length=200, verbose_name=_("Title"))
+    locality = models.ForeignKey(Locality, verbose_name=_("Locality"))
+    post = models.CharField(max_length=200, verbose_name="")
+    body = HTMLField(blank=True, verbose_name=_("Text"))
+    count_view = models.IntegerField(default=0, verbose_name=_("Count"))
+    share = models.BooleanField(default=True, blank=True)
+    organization = models.ForeignKey(
+        Organization, verbose_name=_("Organization"))
+    slug = models.CharField(
+        max_length=200, unique=True, blank=True, verbose_name=_("Slug"))
+    date_created = models.DateTimeField(
+        verbose_name=_("Dated the"), auto_now=True)
+    date_expired = models.DateTimeField(
+        verbose_name=_("Date expired"), default=timezone.now)
+    lang = models.ForeignKey(
+        Language, blank=True, null=True, verbose_name=_("Language"))
+    destination_email = models.EmailField(
+        verbose_name=_("Email"), unique=True, blank=True)
+    objects = CallForTenderManager()
+
+    def __str__(self):
+        return "{}/{} / {}".format(self.TYPE_NOTICE.get(self.type_notice),
+                                   self.title, self.date_expired)
+
+
 class Notice(models.Model):
+    """ Avis
+    """
 
     class Meta:
         verbose_name = _("Notice")
         verbose_name_plural = _("Notices")
+        ordering = ['-date_created']
 
-    N = 'n'
-    C = 'c'
-    TYPE_NOTICE = {
-        N: _("Notice"),
-        C: _("Call for tenders")
-    }
-    type_notice = models.CharField(verbose_name=_("Type"), max_length=50,
-                                   choices=TYPE_NOTICE.items(), default=N)
-    category = models.ForeignKey(Category, verbose_name=_("Category"))
+    locality = models.ForeignKey(Locality, verbose_name=_("Locality"))
+    post = models.CharField(max_length=200, verbose_name="")
+    contract = models.ForeignKey(Contract, verbose_name=_("Contract"))
     body = HTMLField(blank=True, verbose_name=_("Text"))
     title = models.CharField(max_length=200, verbose_name=_("Title"))
-    count_view = models.IntegerField(default=0)
+    count_view = models.IntegerField(default=0, verbose_name=_("Count"))
+    contract_length = models.IntegerField(
+        verbose_name=_("Durée du contrat"), null=True, blank=True)
     share = models.BooleanField(default=True, blank=True)
     organization = models.ForeignKey(
         Organization, verbose_name=_("Organization"))
@@ -213,16 +350,14 @@ class Notice(models.Model):
     destination_email = models.EmailField(
         verbose_name=_("Email"), unique=True, blank=True)
 
+    objects = NoticeManager()
+
     @property
     def image(self):
         return None
 
     def job_active(self):
         return Notice.objects.filter(date_expired__gte=timezone.now)
-
-    def __unicode__(self):
-        return "{}/{} / {}".format(self.TYPE_NOTICE.get(self.type_notice),
-                                   self.title, self.date_expired)
 
     def __str__(self):
         return "{}/{} / {}".format(self.TYPE_NOTICE.get(self.type_notice),
