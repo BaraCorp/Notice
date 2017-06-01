@@ -6,7 +6,6 @@
           <form "form-horizontal" method="POST" enctype="multipart/form-data"> {% csrf_token %}
               <h2>Nouvel organisation</h2>
               <div  class="form-group">
-                  <label>{{organization_new_form.name.label}}</label>
                   {{organization_new_form.name|add_class:"form-control"}}
               </div>
               <div  class="form-group">
@@ -17,14 +16,8 @@
                   <label>{{organization_new_form.date_created.label}}</label>
                   {{organization_new_form.date_created|add_class:"form-control"}}
               </div>
-              <div  class="form-group">
-                  <label>{{organization_new_form.capital.label}}</label>
-                  {{organization_new_form.capital|add_class:"form-control"}}
-              </div>
-              <div  class="form-group">
-                  <label>{{organization_new_form.email.label}}</label>
-                  {{organization_new_form.email}}
-              </div>
+              <div  class="form-group"> {{organization_new_form.capital|add_class:"form-control"}} </div>
+              <div  class="form-group"> {{organization_new_form.email}} </div>
               <div  class="form-group">
                   <label>{{organization_new_form.date_expired.label}}</label>
                   {{organization_new_form.date_expired|add_class:"form-control"}}

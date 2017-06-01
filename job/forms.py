@@ -10,7 +10,8 @@ from tinymce.widgets import TinyMCE
 
 from functools import partial
 
-from job.models import (Member, Notice, Organization, SmallNotice)
+from job.models import (
+    Member, Notice, Organization, SmallNotice, CallForTender)
 
 
 class SearchForm(forms.Form):
@@ -56,8 +57,17 @@ class NewOrganizationForm(forms.ModelForm):
         fields = ('name', 'logo', 'date_created', 'capital',
                   'email', 'date_expired', 'is_active')
         exclude = ['date_joined']
-        widgets = {'date_created': forms.DateInput(
-            attrs={'class': 'datepicker'})}
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'placeholder': "Nom"}),
+            'email': forms.TextInput(attrs={
+                'placeholder': "Adresse Email"}),
+            'capital': forms.TextInput(attrs={
+                'placeholder': "Capitale de l'organisation"}),
+            'date_created': forms.DateInput(
+                attrs={'class': 'datepicker'}),
+            'date_expired': forms.DateTimeInput(attrs={
+                'class': 'datetimepicker'})}
 
 
 class NewNoticeForm(forms.ModelForm):
@@ -70,6 +80,45 @@ class NewNoticeForm(forms.ModelForm):
         # fields = ('type_notice', 'title', 'share',
         #           'date_expired')
         exclude = ['organization', 'slug', 'date_created', 'count_view']
+
+        widgets = {
+            'date_expired': forms.DateTimeInput(attrs={
+                'class': 'datetimepicker'}),
+            'title': forms.TextInput(attrs={
+                'placeholder': "Titre"}),
+            'contract_length': forms.TextInput(attrs={
+                'placeholder': "Durée du contrat"}),
+            'destination_email': forms.TextInput(attrs={
+                'placeholder': "Adresse Email"}),
+            'post': forms.TextInput(attrs={
+                'placeholder': "Poste"}),
+            # 'date_of_birth': forms.TextInput(
+            #     attrs={'placeholder': "Date", 'class': 'datepicker'}),
+        }
+
+
+class NewcallForTenderForm(forms.ModelForm):
+
+    body = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+
+    class Meta:
+        model = CallForTender
+
+        # fields = ('type_notice', 'title', 'share',
+        #           'date_expired')
+        exclude = ['organization', 'slug', 'date_created', 'count_view']
+
+        widgets = {
+            'date_expired': forms.DateInput(attrs={'class': 'datetimepicker'}),
+            'title': forms.TextInput(attrs={
+                'placeholder': "Titre"}),
+            'destination_email': forms.TextInput(attrs={
+                'placeholder': "Adresse Email"}),
+            'post': forms.TextInput(attrs={
+                'placeholder': "Poste"}),
+            # 'date_of_birth': forms.TextInput(
+            #     attrs={'placeholder': "Date", 'class': 'datepicker'}),
+        }
 
 
 class UserCreationForm(forms.ModelForm):

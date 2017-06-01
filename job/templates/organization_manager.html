@@ -18,7 +18,7 @@
                     <th>Date d'expiration</th>
                     <th>Statut</th>
                     <th>Modification</th>
-                    <th>Ajouter un avi</th>
+                    <th colspan="2">Ajouter un avi</th>
                 </tr>
                 {% for organization in organizations %}
                     <tr>
@@ -30,10 +30,13 @@
                         <td>{{organization.date_expired}}</td>
                         <td>{{organization.is_active}}</td>
                         <td align="center">
-                          <a class="btn btn-default" href="{{organization.url_change}}"><em class="glyphicon glyphicon-edit"></em></a>
+                          <a class="btn btn-default" href="{{ organization.url_change }}"><em class="glyphicon glyphicon-edit"></em></a>
                         </td>
                         <td align="center">
-                          <a class="btn btn-default" href="{{organization.url_notice}}"><em class="glyphicon glyphicon-plus"></em></a>
+                          <a class="btn btn-default" href="{{ organization.url_notice}}"><em class="glyphicon glyphicon-plus"> {% trans 'Notice' %}</em></a>
+                        </td>
+                        <td align="center">
+                          <a class="btn btn-default" href="{{ organization.url_call_tender }}"><em class="glyphicon glyphicon-plus"> {% trans 'Call for tender' %}</em></a>
                         </td>
                     </tr>
                 {% endfor %}

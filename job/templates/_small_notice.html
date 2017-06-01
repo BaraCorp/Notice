@@ -18,7 +18,7 @@
      <!-- Message body  -->
       <div id="message" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
         <div class="panel-body">
-          <form action= "/" "form-horizontal" method="POST" >{% csrf_token %}
+          <form method="POST" >{% csrf_token %}
             <div class="form-group ">
               {{small_notice_form.name|add_class:"form-control"}}
             </div>

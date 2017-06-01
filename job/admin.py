@@ -9,8 +9,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from job.forms import (UserChangeForm, UserCreationForm)
-from job.models import (Notice, Member, PhoneNumber, Organization, Locality,
-                        CommentNotice, Contract, Language, SmallNotice)
+from job.models import (
+    Notice, CallForTender, Member, PhoneNumber, Organization, Locality,
+    CommentNotice, Contract, Language, SmallNotice)
 
 # unregister and register again
 # admin.site.unregister(Group)
@@ -99,6 +100,14 @@ class ContractAdmin(admin.ModelAdmin):
 
 @admin.register(Notice)
 class NoticeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date_created', 'share', 'date_expired',
+                    'count_view', 'organization', 'slug', 'contract')
+    list_filter = ('date_created', 'date_expired',
+                   'organization')
+
+
+@admin.register(CallForTender)
+class CallForTenderAdmin(admin.ModelAdmin):
     list_display = ('title', 'date_created', 'share', 'date_expired',
                     'count_view', 'organization', 'slug')
     list_filter = ('date_created', 'date_expired',

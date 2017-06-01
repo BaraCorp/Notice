@@ -8,9 +8,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 
+from django.http import HttpResponse
+from django.core import serializers
+
 from job.models import Notice, Member, Organization, SmallNotice, CallForTender
 from job.forms import (SearchForm, UserCreationForm, NewNoticeForm,
-                       UserChangeForm, NewOrganizationForm, SmallNoticeForm)
+                       UserChangeForm, NewOrganizationForm, SmallNoticeForm,
+                       NewcallForTenderForm)
 
 
 def init(request):
@@ -27,7 +31,7 @@ def init(request):
             if not result:
                 result_not_found = "Aucun numéro ne correspond"
 
-    if request.method == 'POST' and '"_small_notice"' in request.POST:
+    if request.method == 'POST' and '_small_notice' in request.POST:
         print("_small_notice")
         if small_notice_form.is_valid():
             small_notice = small_notice_form.save(commit=False)
@@ -39,6 +43,16 @@ def init(request):
                'search_form': search_form, 'msg_result': result,
                'settings': settings}
     return context
+
+
+def data_json(request, *args, **kwargs):
+    obj = kwargs["obj"]
+    dic = {"1": Notice,
+           "2": CallForTender,
+           "3": SmallNotice}
+    jsondata = serializers.serialize(
+        "json", dic.get(obj).objects.all())
+    return HttpResponse(jsondata, content_type='application/json')
 
 
 @login_required
@@ -59,6 +73,26 @@ def add_notice(request, *args, **kwargs):
     cxt = {'user': user, 'notice_form': notice_form,
            'org_name': orgztion.name}
     return render(request, 'notice_new.html', cxt)
+
+
+@login_required
+def call_for_tender_new(request, *args, **kwargs):
+    id_url = kwargs["pk_org"]
+
+    orgztion = Organization.objects.get(pk=id_url)
+    user = request.user
+    if request.method == 'POST' and '_call_for_tender_new' in request.POST:
+        call_for_tender_form = NewcallForTenderForm(request.POST or None)
+        if call_for_tender_form.is_valid():
+            notice = call_for_tender_form.save(commit=False)
+            notice.organization = orgztion
+            notice.save()
+            return redirect("/")
+    else:
+        call_for_tender_form = NewcallForTenderForm()
+    cxt = {'user': user, 'call_for_tender_form': call_for_tender_form,
+           'org_name': orgztion.name}
+    return render(request, 'call_for_tender_new.html', cxt)
 
 
 @login_required
@@ -208,6 +242,8 @@ def organization_manager(request):
             "organization-view", args=[organization.pk])
         organization.url_notice = reverse(
             "add-notice", args=[organization.pk])
+        organization.url_call_tender = reverse(
+            "call-for-tender-new", args=[organization.pk])
 
     user = request.user
     if request.method == 'POST' and '_organization_new' in request.POST:

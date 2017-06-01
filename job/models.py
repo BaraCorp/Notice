@@ -312,11 +312,11 @@ class CallForTender(models.Model):
         Language, blank=True, null=True, verbose_name=_("Language"))
     destination_email = models.EmailField(
         verbose_name=_("Email"), unique=True, blank=True)
+
     objects = CallForTenderManager()
 
     def __str__(self):
-        return "{}/{} / {}".format(self.TYPE_NOTICE.get(self.type_notice),
-                                   self.title, self.date_expired)
+        return "{}/{}/{}".format(self.locality, self.title, self.date_expired)
 
 
 class Notice(models.Model):
@@ -329,7 +329,7 @@ class Notice(models.Model):
         ordering = ['-date_created']
 
     locality = models.ForeignKey(Locality, verbose_name=_("Locality"))
-    post = models.CharField(max_length=200, verbose_name="")
+    post = models.CharField(max_length=200, verbose_name=_("Poste"))
     contract = models.ForeignKey(Contract, verbose_name=_("Contract"))
     body = HTMLField(blank=True, verbose_name=_("Text"))
     title = models.CharField(max_length=200, verbose_name=_("Title"))
@@ -360,7 +360,7 @@ class Notice(models.Model):
         return Notice.objects.filter(date_expired__gte=timezone.now)
 
     def __str__(self):
-        return "{}/{} / {}".format(self.TYPE_NOTICE.get(self.type_notice),
+        return "{}/{} / {}".format(self.contract,
                                    self.title, self.date_expired)
 
     def is_share(self):
@@ -382,7 +382,7 @@ class Notice(models.Model):
         super(Notice, self).save(*args, **kwargs)
 
     def type_text(self):
-        return self.TYPE_NOTICE.get(self.type_notice)
+        return self.contract
 
     def post_url(self):
         return os.path.join(

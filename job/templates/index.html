@@ -23,6 +23,28 @@
             </div>
         </div>
       {% endfor %}
+      {% for tender in tenders %}
+        <div class="notice">
+            {{tender.title}}
+            <div>
+              <em class="glyphicon glyphicon-calendar"></em> Date de Publication: <span class="create-date">{{tender.date_created}} </span>
+              -- <em class="glyphicon glyphicon-calendar"></em> Date Limite: <span class="expired-date">{{tender.date_expired}} </span>
+            </div>
+           <span class="pull-right readMore">{% trans 'Lire la suite' %}</span>
+            <div class="desc">
+            <hr/>
+                <div class="org-title">
+                  {% if tender.organization.logo %}
+                    <a href="{{tender.organization.logo.url}}"><img class="logo" alt="" src="{{tender.organization.logo.url}}" /></a>
+                  {% endif %}
+                  {{ tender.organization.name }}
+                </div>
+                <div>
+                  <html>{{ tender.body|safe }}</html>
+                </div>
+            </div>
+        </div>
+      {% endfor %}
 {% endblock %}
 {% block rigth %}
   <div class="row clearfix">
