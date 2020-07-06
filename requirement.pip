@@ -1,5 +1,6 @@
-Django==1.11
-django-tinymce==2.6.0
-Pillow==4.1.0
-django-widget-tweaks
-
+Django==1.11.10
+django-forms-bootstrap==3.1.0
+django-tinymce==2.7.0
+django-widget-tweaks==1.4.2
+Pillow==5.2.0
+pytz==2018.5

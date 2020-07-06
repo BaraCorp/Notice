@@ -11,7 +11,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.core import serializers
 
-from job.models import Notice, Member, Organization, SmallNotice, CallForTender
+from job.models import (
+    Notice, Member, Organization, SmallNotice, CallForTender, NotClean)
 from job.forms import (SearchForm, UserCreationForm, NewNoticeForm,
                        UserChangeForm, NewOrganizationForm, SmallNoticeForm,
                        NewcallForTenderForm)
@@ -53,6 +54,33 @@ def data_json(request, *args, **kwargs):
     jsondata = serializers.serialize(
         "json", dic.get(obj).objects.all())
     return HttpResponse(jsondata, content_type='application/json')
+
+
+@login_required
+def not_clean_manager(request):
+
+    cxt = {}
+    not_cl = NotClean.clean_objects.last()
+    if request.method == 'POST' and '_call_for_tender_new' in request.POST:
+        call_for_tender_form = NewcallForTenderForm(request.POST or None)
+        if call_for_tender_form.is_valid():
+            call_for_tender_form.save()
+            return redirect("/")
+    else:
+        call_for_tender_form = NewcallForTenderForm()
+    cxt = {"call_not_clean": not_cl,
+           "call_for_tender_form": call_for_tender_form}
+    return render(request, 'not_clean_manager.html', cxt)
+
+
+# @login_required
+# def clean_call_tender(request, *args, **kwargs):
+#     cxt = {}
+#     id_url = kwargs["url"]
+
+#     for_clean = NotClean.clean_objects.get(pk=id_url)
+#     cxt.update({'for_clean': for_clean})
+#     return render(request, 'clean_call_tender.html', cxt)
 
 
 @login_required

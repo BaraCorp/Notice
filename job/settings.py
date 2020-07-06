@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'tinymce',
+    'django_forms_bootstrap',
     'job'
 ]
 
@@ -131,6 +132,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
 try:
     from job.settings_local import *

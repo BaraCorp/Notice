@@ -11,10 +11,16 @@ from django.contrib.auth.admin import UserAdmin
 from job.forms import (UserChangeForm, UserCreationForm)
 from job.models import (
     Notice, CallForTender, Member, PhoneNumber, Organization, Locality,
-    CommentNotice, Contract, Language, SmallNotice)
+    CommentNotice, Contract, Language, SmallNotice, NotClean)
 
 # unregister and register again
 # admin.site.unregister(Group)
+
+
+@admin.register(NotClean)
+class NotCleanAdmin(admin.ModelAdmin):
+    list_display = ('url', 'process')
+    list_filter = ('url', 'process')
 
 
 @admin.register(Member)

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticfiles i18n bootstrap_tags %}
+{% block content_lg %}
+
+    <div class="col-md-7">
+        <div> {{call_not_clean.body|safe}} </div>
+    </div>
+    <div class="col-md-5">
+        <form role="form" method="post"> {% csrf_token %}
+            <div>{{call_for_tender_form|as_bootstrap}}</div>
+            <div class='text-right'>
+                <button type="submit" name="_call_for_tender_new" class="btn btn-sm btn-primary" value="OK">{% trans 'Save' %}</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from django.core import validators
-
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.utils import timezone
@@ -216,8 +216,8 @@ class SmallNotice(models.Model):
         ordering = ['-date']
 
     name = models.CharField(max_length=200, verbose_name=_("Name"))
-    subject = models.CharField(max_length=20, verbose_name=_("Subject"),
-                               blank=True)
+    subject = models.CharField(
+        max_length=20, verbose_name=_("Subject"), blank=True)
     body = models.CharField(max_length=200)
     email = models.EmailField(verbose_name=_("Email"), null=True)
     validated = models.BooleanField(verbose_name=_("Validé"), default=False)
@@ -285,6 +285,32 @@ class CallForTenderManager(models.Manager):
             date_expired__gte=timezone.now())
 
 
+class NotCleanManager(models.Manager):
+
+    def notprocess(self):
+        return super(NotCleanManager, self).filter(
+            process=False)
+
+
+class NotClean(models.Model):
+    """
+    """
+    class Meta:
+        verbose_name = "Not clean"
+
+    url = models.CharField(max_length=150, primary_key=True)
+    body = HTMLField(blank=True, verbose_name=_("Text"))
+    process = models.BooleanField(default=False)
+    objects = models.Manager()
+    clean_objects = NotCleanManager()
+
+    def url_view(self):
+        return reverse("clean-call-tender", args=[self.url])
+
+    def __str__(self):
+        return "{} {}".format(self.process, self.url)
+
+
 class CallForTender(models.Model):
     """ Offres
     """
@@ -322,12 +348,26 @@ class CallForTender(models.Model):
 class Notice(models.Model):
     """ Avis
     """
+    J = "jours"
+    W = "semaines"
+    M = "mois"
+    Y = "ans"
+
+    TYPE_LENGTH  = {
+        J: 'Jours',
+        W: 'Semaines',
+        M: 'Mois',
+        Y: 'Ans'
+    }
 
     class Meta:
+
         verbose_name = _("Notice")
         verbose_name_plural = _("Notices")
         ordering = ['-date_created']
 
+    slug = models.CharField(
+        max_length=200, unique=True, blank=True, verbose_name=_("Slug"))
     locality = models.ForeignKey(Locality, verbose_name=_("Locality"))
     post = models.CharField(max_length=200, verbose_name=_("Poste"))
     contract = models.ForeignKey(Contract, verbose_name=_("Contract"))
@@ -336,11 +376,10 @@ class Notice(models.Model):
     count_view = models.IntegerField(default=0, verbose_name=_("Count"))
     contract_length = models.IntegerField(
         verbose_name=_("Durée du contrat"), null=True, blank=True)
+    type_length = models.CharField("Période", max_length=50, choices=TYPE_LENGTH.items())
     share = models.BooleanField(default=True, blank=True)
     organization = models.ForeignKey(
         Organization, verbose_name=_("Organization"))
-    slug = models.CharField(
-        max_length=200, unique=True, blank=True, verbose_name=_("Slug"))
     date_created = models.DateTimeField(
         verbose_name=_("Dated the"), auto_now=True)
     date_expired = models.DateTimeField(
@@ -378,6 +417,7 @@ class Notice(models.Model):
         self.slug = re.sub(
             "[\!\*\’\(\)\;\:\@\&\=\+\$\,\/\?\#\[\](\-)\s \. \؟]+", '-',
             self.title.lower())
+        print("SAVING ...")
         self.share = self.is_share()
         super(Notice, self).save(*args, **kwargs)
 

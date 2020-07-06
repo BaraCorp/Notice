@@ -22,20 +22,22 @@
     <![endif]--><!--
     <script src="{% static '/js/jquery.min.js' %}" type="text/javascript"></script> -->
     <script src="{% static '/js/jquery-ui.min.js' %}" type="text/javascript"></script>
+    <link href="{% static '/js/jquery-ui.css' %}" rel="Stylesheet" type="text/css" />
     <script src="{% static '/js/job.js' %}" type="text/javascript"></script>
     <script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.js' %}" type="text/javascript"></script>
     <script src="{% static 'bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.fr.js' %}" type="text/javascript"></script>
-    <link href="{% static '/js/jquery-ui.css' %}" rel="Stylesheet" type="text/css" />
     <link href="{% static 'css/font-awesome.css' %}" rel="Stylesheet" type="text/css" />
     <link href="{% static 'menu.css' %}" rel="stylesheet">
     <link href="{% static 'job.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.3.0/js/mdb.min.js"></script>
+    <meta property="og:title" content="notice" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Kibaru.ml"/>
+    <meta property="og:description" content="Kibaru ou « el Ghad », est un site d’information, premier du genre au Mali, avec une version en français et en arabe. Notre credo c’est « l’information, et tout ce qu’il faut comprendre derrière les faits »." />
     {% block head_ %}
-        <meta property="og:title" content="notice" />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="fr_FR" />
     {% endblock %}
   </head>
   <body>
@@ -82,7 +84,7 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 {% block content_lg %}
